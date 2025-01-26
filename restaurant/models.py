@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class MenuItem(models.Model):
@@ -8,7 +9,7 @@ class MenuItem(models.Model):
     availability = models.BooleanField(default=1)
     
     def __str__(self):
-        return self.name, self.description
+        return f"{self.name} >>>> {self.description}"
     
     
 class Order(models.Model):
@@ -16,14 +17,15 @@ class Order(models.Model):
     quantity = models.IntegerField()
     order_status = models.CharField(max_length=5, default=0, help_text=' 0 == Pending 1 == Confirmed 2 == Shipped 3 == Delivered')
     order_date = models.DateField(auto_now_add=True)
+    user = models.ForeignKey(to=User, related_name="order", on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.menu_item
+        return f"{self.user.username} has ordered {self.quantity} {self.menu_item.name}"
     
 class Reservation(models.Model):
     customer_name = models.CharField(max_length=50)
     table_number = models.IntegerField()
-    reservation_time = models.DateTimeField()
+    reservation_time = models.TimeField()
     guest_count = models.IntegerField()
     
     def __str__(self):
